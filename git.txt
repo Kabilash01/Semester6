@@ -1,0 +1,24 @@
+# 1. Initialize git repository
+git init
+
+# 2. Add remote origin
+git remote add origin https://github.com/Kabilash01/Semester6.git
+
+# 3. Create .gitignore to exclude venv and other unnecessary files
+# (File created with venv/ as first entry)
+
+# 4. Configure git user
+git config user.email "user@example.com"
+git config user.name "User"
+
+# 5. Stage all files
+git add .
+
+# 6. Commit the files
+git commit -m "Initial commit - Add project files without venv"
+
+# 7. Rename branch to main
+git branch -M main
+
+# 8. Push to GitHub
+git push -u origin main
