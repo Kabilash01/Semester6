@@ -1,0 +1,70 @@
+// Always write in async await try catch blocks for each question and each endpoint.w
+// If $ is used in that sentence then it means that you have to use template literals in that part of the code. and you need to use `` instead of "" for the string.
+import express from "express";
+import axios from "axios";
+
+const app = express();
+const PORT = 6060;
+
+// Step 1: assign the public url to base url here and intialize dataset variable to store the data here
+
+const BASE_URL = 'https://t4e-demotestserver.onrender.com/api';
+let dataset = [];
+
+// Step 2: Get the token by calling api using jwt and using the public call 
+
+const loadData = async () => {
+    // Use POST method in axios to get the token by passing the studentId and set as parameters in the request body
+    try{
+        const response = await axios.post(`${BASE_URL}/public/token`,{
+            "studentId":"E0323002",
+            "set": "setA"
+        });
+
+        const token = response.data.token;
+        const datasetURL = response.data.dataUrl;
+        console.log(token);
+        console.log(datasetURL);
+
+        //Private call to get the dataset and store it in the dataset variable
+        // Use GET method in axios to get the dataset by passing the token in the request ehader and the dataset URL as the 
+        const response2 = await axios.get(`${BASE_URL}${datasetURL}`,{
+            headers : {Authorization : `Bearer ${token}`},
+        });
+
+        dataset = response2.data;
+        console.log(dataset);
+
+        app.listen(PORT,()=>{
+            console.log(`Server is running at ${PORT}`);
+        });
+    }
+    catch(err){
+        console.log(err);
+    }
+};
+
+loadData();
+
+
+// Use middle ware to just see the dataset and see how it is structured.
+app.get('/',(req,res)=>{
+    res.json(dataset);
+});
+
+// Static Endpoint to return all movies from the cached dataset.
+//Use the get method with the provided endpoint to return the dataset and output is response.json format
+//Q1. GET /movies
+app.get("/movies",(req,res) => {
+    res.json({totalMovies:dataset.length,dataset});
+});
+
+//Q2. GET /movies/:id (Dynamic Endpoint)
+app.get("/movies/:id",(req,res) => {
+    const id = req.params.id;
+    const movie = dataset.data.movies.find((m) => m.id === id);
+    res.send(movie);
+});
+
+//Q3. GET /movies/genre (Search Query Endpoint) ,filter needs to be used
+app.get("/movies/genre",(req,res))
