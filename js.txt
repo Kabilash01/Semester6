@@ -1,0 +1,35 @@
+import express from "express";
+import dotenv from "dotenv";
+import axios from "axios";
+
+dotenv.config();
+const app = express();
+let dataset = [];
+const port = 5000;
+const baseurl = "https://t4e-demotestserver.onrender.com/api";
+
+const dataloader = async () => {
+    const response = await axios.post(`${baseurl}/public/token`, {
+        "studentId": "E0323036",
+        "set": "setA"
+    });
+
+    const token = response.data.token;
+    const dataurl = response.data.dataUrl;
+
+    const response2 = await axios.get(`${baseurl}${dataurl}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    dataset = response2.data;
+
+    app.listen(port, () => {
+        console.log('server is running...');
+    });
+}
+
+dataloader();
+
+
+
+
